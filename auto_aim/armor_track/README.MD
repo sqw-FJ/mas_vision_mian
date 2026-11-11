@@ -244,7 +244,7 @@ $$
 
 **代码实现：**
 ```cpp
-armor.ypr_in_world = rm_utils::eulers(R_armor2world, 2, 1, 0);  // Z-Y-X 顺序
+armor.ypr_in_world = rm_utils::eulers_zyx(R_armor2world);  // Z-Y-X 顺序，返回 [yaw, pitch, roll]
 ```
 
 **欧拉角含义：**

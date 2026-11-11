@@ -21,6 +21,10 @@ Eigen::Vector3d eulers(
 // e.g. 先绕z轴旋转，再绕y轴旋转，最后绕x轴旋转：axis0=2, axis1=1, axis2=0
 Eigen::Vector3d eulers(Eigen::Matrix3d R, int axis0, int axis1, int axis2, bool extrinsic = false);
 
+// 旋转矩阵转 ZYX 欧拉角，返回 [yaw, pitch, roll]
+// 与 rotation_matrix() 严格互逆；调用处不应再手写 (2, 1, 0) 裸轴号
+inline Eigen::Vector3d eulers_zyx(const Eigen::Matrix3d &R) { return eulers(R, 2, 1, 0); }
+
 // 欧拉角转旋转矩阵
 // zyx:先绕z轴旋转，再绕y轴旋转，最后绕x轴旋转
 Eigen::Matrix3d rotation_matrix(const Eigen::Vector3d & ypr);

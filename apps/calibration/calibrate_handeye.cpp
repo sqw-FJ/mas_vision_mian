@@ -157,7 +157,7 @@ int calibrate_handeye_main()
         // 计算云台到世界的旋转
         Eigen::Matrix3d R_imubody2imuabs = q.toRotationMatrix();
         Eigen::Matrix3d R_gimbal2world   = R_gimbal2imubody.transpose() * R_imubody2imuabs * R_gimbal2imubody;
-        Eigen::Vector3d ypr              = rm_utils::eulers(R_gimbal2world, 2, 1, 0) * 57.3;
+        Eigen::Vector3d ypr              = rm_utils::eulers_zyx(R_gimbal2world) * 57.3;
 
         // 检测标定板
         std::vector<cv::Point2f> centers_2d;
@@ -302,7 +302,7 @@ int calibrate_handeye_main()
     // 计算标定板同竖直摆放时的偏角
     Eigen::Matrix3d R_board2world_eigen;
     cv::cv2eigen(R_board2world, R_board2world_eigen);
-    Eigen::Vector3d board_ypr = rm_utils::eulers(R_board2world_eigen, 2, 1, 0) * 57.3;
+    Eigen::Vector3d board_ypr = rm_utils::eulers_zyx(R_board2world_eigen) * 57.3;
 
     // 保存结果
     YAML::Node config_out = YAML::LoadFile(CONFIG_PATH);

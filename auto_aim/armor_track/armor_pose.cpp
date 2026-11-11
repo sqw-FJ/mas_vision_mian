@@ -104,8 +104,8 @@ bool ArmorPose::GetArmorPose(Armor &armor) const
 
     Eigen::Matrix3d R_armor2gimbal = R_camera2gimbal_ * R_armor2camera;
     Eigen::Matrix3d R_armor2world  = R_gimbal2world_ * R_armor2gimbal;
-    armor.ypr_in_gimbal            = rm_utils::eulers(R_armor2gimbal, 2, 1, 0);
-    armor.ypr_in_world             = rm_utils::eulers(R_armor2world, 2, 1, 0);
+    armor.ypr_in_gimbal            = rm_utils::eulers_zyx(R_armor2gimbal);
+    armor.ypr_in_world             = rm_utils::eulers_zyx(R_armor2world);
     armor.ypd_in_world             = rm_utils::xyz2ypd(armor.xyz_in_world);
 
     if (!armor.ypr_in_gimbal.allFinite() || !armor.ypr_in_world.allFinite() || !armor.ypd_in_world.allFinite()) return false;
@@ -129,7 +129,7 @@ void ArmorPose::optimize_yaw(Armor &armor) const
     }
     if (normalized_points.size() != armor.points.size()) return;
 
-    const double center = rm_utils::eulers(R_gimbal2world_, 2, 1, 0)[0];    //yaw 搜索区间的中心角
+    const double center = rm_utils::eulers_zyx(R_gimbal2world_)[0];    //yaw 搜索区间的中心角
     const double pitch = armor.number == "outpost" ? -15.0 * CV_PI / 180.0
                                                     : 15.0 * CV_PI / 180.0;
     const auto rotation = [pitch](double yaw) {
@@ -171,8 +171,8 @@ void ArmorPose::optimize_yaw(Armor &armor) const
     const Eigen::Matrix3d R_armor2world = rotation(best_yaw);
     armor.xyz_in_gimbal = R_camera2gimbal_ * best_t + t_camera2gimbal_;
     armor.xyz_in_world  = R_gimbal2world_ * armor.xyz_in_gimbal;
-    armor.ypr_in_world  = rm_utils::eulers(R_armor2world, 2, 1, 0);
-    armor.ypr_in_gimbal = rm_utils::eulers(R_gimbal2world_.transpose() * R_armor2world, 2, 1, 0);
+    armor.ypr_in_world  = rm_utils::eulers_zyx(R_armor2world);
+    armor.ypr_in_gimbal = rm_utils::eulers_zyx(R_gimbal2world_.transpose() * R_armor2world);
     armor.ypd_in_world  = rm_utils::xyz2ypd(armor.xyz_in_world);
 }
 
@@ -308,7 +308,7 @@ void ArmorPose::showPoseDebug(const std::vector<Armor> &armors, const cv::Mat &b
 
     // 显示IMU位姿信息
     Eigen::Matrix3d       R_gimbal2world = Get_R_gimbal2world();
-    Eigen::Vector3d       imu_ypr        = rm_utils::eulers(R_gimbal2world, 2, 1, 0);
+    Eigen::Vector3d       imu_ypr        = rm_utils::eulers_zyx(R_gimbal2world);
     rm_utils::DisplayText imu_text;
     imu_text.content = "  IMU YPR: [" + std::to_string(imu_ypr.x() * 57.3f).substr(0, 5) + ", " + std::to_string(imu_ypr.y() * 57.3f).substr(0, 5) +
                        ", " + std::to_string(imu_ypr.z() * 57.3f).substr(0, 5) + "] deg";

@@ -51,7 +51,7 @@ ShootResult ArmorShoot::shoot(const std::optional<Target> &target, std::chrono::
                              const Eigen::Matrix3d &R_gimbal2world, const cv::Mat &bgr_img, const std::string &window_name)
 {
     // 从旋转矩阵提取云台欧拉角（yaw, pitch）
-    Eigen::Vector3d gimbal_euler = rm_utils::eulers(R_gimbal2world, 2, 1, 0);
+    Eigen::Vector3d gimbal_euler = rm_utils::eulers_zyx(R_gimbal2world);
     double          gimbal_yaw   = gimbal_euler[0];
     double          gimbal_pitch = gimbal_euler[1];
 
